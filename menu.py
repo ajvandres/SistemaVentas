@@ -1,57 +1,51 @@
 # 1 Funciones
 
-def validarCadenaVacia(cadena):
-    return cadena != ""
+def esMayorACero(valor):
+    return valor > 0
 
-def validarNumero(valor, referencia):
-    return valor > referencia
-
-def agregarVenta():
- 
+def pedirProducto():
     while True:
-        producto = input("producto: ").strip().title()
-        if producto != "":
-            break
+        producto = input("producto: ").strip().title()   # Normalizacion dejo para despues
+        if producto:  # si la cadena esta vacia devuelve false
+            return producto
         else:
             print("No se admiten productos sin valor")
-    
+            
+def pedirValor(tipo, tipoDato):
     while True:  
         try:
-            cantidad = int(input("cantidad: "))
-            if validarNumero(cantidad, 0):
-                break
+            print(tipo, ": ",sep="", end="")
+            valor = tipoDato(input())
+            if esMayorACero(valor):
+                return valor
             else:
                 print("Error: ingresar valor mayor que cero")        
         except ValueError:
-            print("Error: ingresar número válido")
-    
-    while True:  
-        try:
-            precio = float(input("precio: "))
-            if validarNumero(precio, 0.0):
-                break
-            else:
-                print("Error: ingresar valor mayor que cero")        
-        except ValueError:
-            print("Error: ingresar número válido")        
-    
-    ventas.append({"producto": producto, "cantidad": cantidad, "precio": precio})
+            print("Error: ingresar número válido")    
 
-def mostrarVentas():
-    
+
+
+def crearVenta(producto, cantidad, precio):
+    return {"producto": producto, "cantidad": cantidad, "precio": precio}
+        
+
+def mostrarVentas(ventas):    
+    listadoVentas = []
     if not ventas:
-        print("No hay ventas cargadas")
+        return ["No hay ventas cargadas"]
     else:    
-        for i, registro in enumerate(ventas):
-                print(f"{i+1}"
-                        ,registro["producto"]
-                        ,registro["cantidad"]
-                        ,registro["precio"]
-                        ,sep = " - ")
+        for i, venta in enumerate(ventas):
+            listadoVentas.append(str(i+1) + " - "
+                        +venta["producto"] + " - " 
+                        +str(venta["cantidad"]) + " - "
+                        +str(venta["precio"])
+                        )
+    return listadoVentas        
                 
-def calcularTotal():
-    acumulado = sum(itemCant["cantidad"] * itemCant["precio"] for itemCant in ventas)
-    print("Total Vendido:", f"acumulado: .2f")    
+def calcularTotal(ventas):
+    acumulado = sum(venta["cantidad"] * venta["precio"] for venta in ventas)
+    return acumulado
+
 
 # 2 Datos
 
@@ -67,20 +61,30 @@ menu = """Bienvenido Andres
 
 while True:
     opcion = input(menu).strip() # strip borra espacios en blanco externos
+    
     if opcion == "4":
         break
     
     elif opcion == "1":
-        agregarVenta()        
+        producto = pedirProducto()
+        cantidad = pedirValor("cantidad", int)
+        precio = pedirValor("precio", float)
+        venta = crearVenta(producto, cantidad, precio)
+        ventas.append(venta)
+        print("Venta agregada")
     
     elif opcion == "2":
-        mostrarVentas()
+        listadoVentas = mostrarVentas(ventas)
+        print("\n".join(listadoVentas))
     
     elif opcion == "3":
-        calcularTotal()
+        totalVentas = calcularTotal(ventas)
+        print("Total Vendido:", f"{totalVentas:.2f}")
         
     else:
-        print("elija una opcion valida")        
+        print("elija una opcion valida")
+        
+    print()        
 
 print()
 print("fin del programa")
